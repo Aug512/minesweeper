@@ -1,0 +1,3 @@
+const GAME_INIT_MEDIUM = 'GAME/INIT/MEDIUM'
+
+export default GAME_INIT_MEDIUM;
