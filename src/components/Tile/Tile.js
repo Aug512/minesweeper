@@ -1,7 +1,7 @@
 import React from 'react'
 // import flagIcon from '...'
 
-const Tile = ( { data, openTile, setFlag } ) => {
+const Tile = ( { data, setGameOver, openTile, setFlag } ) => {
 
   return(
     <div
@@ -9,6 +9,9 @@ const Tile = ( { data, openTile, setFlag } ) => {
       onClick={ () => {
         if (!data.isFlag) {
           openTile(data.index)
+        }
+        if(data.isBomb) {
+          setGameOver(true)
         }
        }
       }
