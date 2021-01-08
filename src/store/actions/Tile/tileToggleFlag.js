@@ -1,3 +1,0 @@
-const TILE_FLAG_TOGGLE = 'TILE/FLAG/TOGGLE'
-
-export default TILE_FLAG_TOGGLE;
