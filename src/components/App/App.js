@@ -10,58 +10,49 @@ function App() {
     width: 5,
     height: 5,
     difficulty: 'test',
-    bombsCounter: 0,
+    bombsCounter: 4,
     isGameOver: false,
+    timer: 0,
   }
 
   const [state, setState] = useState(initailState);
 
   const selectDifficulty = difficulty => {
-    
-    switch (difficulty) {
-      case 'easy':
-        setState(
-          {
-            ...state,
-            width: 8,
-            height: 8,
-            bombsCounter: 10,
-            difficulty: difficulty,
-          }
-        );
-        break;
-      case 'medium':
-        setState(
-          {
-            ...state,
-            width: 16,
-            height: 16,
-            bombsCounter: 40,
-            difficulty: difficulty,
-          }
-        );
-        break;
-      case 'hard':
-        setState(
-          {
-            ...state,
-            width: 30,
-            height: 16,
-            bombsCounter: 99,
-            difficulty: difficulty,
-          }
-        );
-        break;
+
+    if (difficulty === 'easy') {
+      return {
+        ...state,
+        width: 8,
+        height: 8,
+        bombsCounter: 10,
+        difficulty: difficulty,
+      }
+    }
+    if (difficulty === 'medium') {
+      return {
+        ...state,
+        width: 16,
+        height: 16,
+        bombsCounter: 40,
+        difficulty: difficulty,
+      }
+    }
+    if (difficulty === 'hard') {
+      return {
+        ...state,
+        width: 30,
+        height: 16,
+        bombsCounter: 99,
+        difficulty: difficulty,
+      }
     }
   }
 
   const initGame = difficulty => {
 
-    selectDifficulty(difficulty);
+    const newState = selectDifficulty(difficulty)
 
-    const boardSize = state.width * state.height;
-
-    const newState = {...state}
+    const boardSize = newState.width * newState.height;
 
     for (let i = 0; i < boardSize; i++) {
       newState.tiles.push({
@@ -75,12 +66,35 @@ function App() {
   
     let x = 0;
     let y = 0;
+
+    const generateBombs = (bombsCounter, maxTiles) => {
+      const bombsIndexes = new Set();
+
+      do {
+        bombsIndexes.add(Math.trunc(Math.random() * maxTiles))
+      } while (bombsIndexes.size <= bombsCounter)
+  
+      bombsIndexes.forEach( index => {
+        console.log(index)
+        newState.tiles.find( tile => {
+          if (tile.index === index) {
+            tile.isBomb = true;
+          }
+        })
+      })
+      console.log(bombsIndexes)
+      console.log(newState)
+    }
+
+    generateBombs(newState.bombsCounter, boardSize)
     
     newState.tiles.forEach((tile) => {
       tile.coords = `${x},${y}`;
       
-      let random_boolean = Math.random() < 0.2; //true if rand < freq (0.2)
-      if (random_boolean) {
+      // let random_boolean = Math.random() < 0.2; //true if rand < freq (0.2)
+      // if (random_boolean) {
+      //   newState.bombs.push(`${x},${y}`);      // origin
+      if (tile.isBomb) {
         newState.bombs.push(`${x},${y}`);
         if (x > 0) newState.numbers.push(`${x-1},${y}`);
         if (x < state.width - 1) newState.numbers.push(`${x+1},${y}`);
@@ -109,15 +123,15 @@ function App() {
       })
     });
   
-    newState.bombs.forEach(bomb => {
-      newState.tiles.find( tile => {
-        if (bomb === tile.coords) {
-          tile.isBomb = true;
-        }
-      }) 
-    });
+    // newState.bombs.forEach(bomb => {
+    //   newState.tiles.find( tile => {
+    //     if (bomb === tile.coords) {
+    //       tile.isBomb = true;
+    //     }
+    //   }) 
+    // });
 
-    setState(newState)
+    setState(newState);
   }
 
   const openTile = (index) => {
@@ -205,7 +219,7 @@ function App() {
   }
 
   useEffect( () => {
-    initGame('test')
+    initGame('easy')
   }, []);
 
   return (
@@ -213,6 +227,7 @@ function App() {
       <div className='buttons'>
         <div className='bombs'>{/*state.bombsCounter*/}</div>
         <div className='newGame' />
+        <div className='timer'>{state.timer}</div>
       </div>
       <div className="App field">
         {state.tiles.map( tile => {
