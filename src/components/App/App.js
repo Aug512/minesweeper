@@ -10,57 +10,49 @@ function App() {
     width: 5,
     height: 5,
     difficulty: 'test',
-    bombsCounter: 0,
+    bombsCounter: 4,
+    isGameOver: false,
+    timer: 0,
   }
 
   const [state, setState] = useState(initailState);
 
   const selectDifficulty = difficulty => {
-    
-    switch (difficulty) {
-      case 'easy':
-        setState(
-          {
-            ...state,
-            width: 8,
-            height: 8,
-            bombsCounter: 10,
-            difficulty: difficulty,
-          }
-        );
-        break;
-      case 'medium':
-        setState(
-          {
-            ...state,
-            width: 16,
-            height: 16,
-            bombsCounter: 40,
-            difficulty: difficulty,
-          }
-        );
-        break;
-      case 'hard':
-        setState(
-          {
-            ...state,
-            width: 30,
-            height: 16,
-            bombsCounter: 99,
-            difficulty: difficulty,
-          }
-        );
-        break;
+
+    if (difficulty === 'easy') {
+      return {
+        ...state,
+        width: 8,
+        height: 8,
+        bombsCounter: 10,
+        difficulty: difficulty,
+      }
+    }
+    if (difficulty === 'medium') {
+      return {
+        ...state,
+        width: 16,
+        height: 16,
+        bombsCounter: 40,
+        difficulty: difficulty,
+      }
+    }
+    if (difficulty === 'hard') {
+      return {
+        ...state,
+        width: 30,
+        height: 16,
+        bombsCounter: 99,
+        difficulty: difficulty,
+      }
     }
   }
 
   const initGame = difficulty => {
 
-    selectDifficulty(difficulty);
+    const newState = selectDifficulty(difficulty)
 
-    const boardSize = state.width * state.height;
-
-    const newState = {...state}
+    const boardSize = newState.width * newState.height;
 
     for (let i = 0; i < boardSize; i++) {
       newState.tiles.push({
@@ -74,12 +66,35 @@ function App() {
   
     let x = 0;
     let y = 0;
+
+    const generateBombs = (bombsCounter, maxTiles) => {
+      const bombsIndexes = new Set();
+
+      do {
+        bombsIndexes.add(Math.trunc(Math.random() * maxTiles))
+      } while (bombsIndexes.size <= bombsCounter)
+  
+      bombsIndexes.forEach( index => {
+        console.log(index)
+        newState.tiles.find( tile => {
+          if (tile.index === index) {
+            tile.isBomb = true;
+          }
+        })
+      })
+      console.log(bombsIndexes)
+      console.log(newState)
+    }
+
+    generateBombs(newState.bombsCounter, boardSize)
     
-    newState.tiles.forEach((tile, i) => {
+    newState.tiles.forEach((tile) => {
       tile.coords = `${x},${y}`;
       
-      let random_boolean = Math.random() < 0.2; //true if rand < freq (0.2)
-      if (random_boolean) {
+      // let random_boolean = Math.random() < 0.2; //true if rand < freq (0.2)
+      // if (random_boolean) {
+      //   newState.bombs.push(`${x},${y}`);      // origin
+      if (tile.isBomb) {
         newState.bombs.push(`${x},${y}`);
         if (x > 0) newState.numbers.push(`${x-1},${y}`);
         if (x < state.width - 1) newState.numbers.push(`${x+1},${y}`);
@@ -98,15 +113,6 @@ function App() {
         x = 0;
         y++;
       }
-      
-      // tile.oncontextmenu = function(e) {
-      // 	e.preventDefault();
-      // 	flag(tile);
-      // }
-      
-      // tile.addEventListener('click', function(e) {
-      // 	clickTile(tile);
-      // });
     });
     
     newState.numbers.forEach(num => {
@@ -117,25 +123,82 @@ function App() {
       })
     });
   
-    newState.bombs.forEach(bomb => {
-      newState.tiles.find( tile => {
-        if (bomb === tile.coords) {
-          tile.isBomb = true;
-        }
-      }) 
-    });
+    // newState.bombs.forEach(bomb => {
+    //   newState.tiles.find( tile => {
+    //     if (bomb === tile.coords) {
+    //       tile.isBomb = true;
+    //     }
+    //   }) 
+    // });
 
-    setState(newState)
+    setState(newState);
   }
 
   const openTile = (index) => {
     const newState = {...state}
     newState.tiles.find( tile => {
+      if (index === tile.index && tile.number === 0 && !tile.isBomb) {
+        openTilesAround(tile.coords)
+      }
       if (index === tile.index) {
         tile.isOpen = true;
       }
     })
     setState(newState);
+  }
+
+  const openTilesAround = (coords) => {       // form - `${x},${y}`
+
+    const emptyTiles = new Set();
+
+    const openEightTiles = coords => {
+      
+      const [x, y] = [coords[0], coords[2]]
+    
+      const coordsAround = [
+        `${+x-1},${+y-1}`,
+        `${+x},${+y-1}`,
+        `${+x+1},${+y-1}`,
+        `${+x-1},${+y}`,
+        `${+x+1},${+y}`,
+        `${+x-1},${+y+1}`,
+        `${+x},${+y+1}`,
+        `${+x+1},${+y+1}`,    
+      ]
+
+      const newState = {...state}
+
+      coordsAround.forEach( coord => {
+        newState.tiles.find( tile => {
+          if (tile.coords === coord && !tile.isFlag) {
+            tile.isOpen = true;
+            if (tile.number === 0) {
+              emptyTiles.add(tile.coords)
+            }
+          }
+        })
+      })
+
+      setState(newState);
+    }
+
+    openEightTiles(coords);
+
+    let initialLength = emptyTiles.length;
+
+    emptyTiles.forEach( coord => {
+      openEightTiles(coord)
+    })
+
+    while (emptyTiles.length !== initialLength) {
+      console.log('while Statement starts...')
+      console.log(emptyTiles)
+      emptyTiles.forEach( coord => {
+        openEightTiles(coord) 
+      })
+      initialLength = emptyTiles.length;
+    }
+
   }
 
   const setFlag = (index) => {
@@ -148,28 +211,38 @@ function App() {
     setState(newState);
   }
 
+  const setGameOver = (bool) => {
+    setState({
+      ...state,
+      isGameOver: bool,
+    })
+  }
+
   useEffect( () => {
-    initGame('test')
+    initGame('easy')
   }, []);
-  
-  // const flag = (tile) => {
-  //   if (gameOver) return;
-  //   if (!tile.classList.contains('tile--checked')) {
-  //     if (!tile.classList.contains('tile--flagged')) {
-  //       tile.innerHTML = 'flag';
-  //       tile.classList.add('tile--flagged');
-  //       } else {
-  //       tile.innerHTML = 'noflag';
-  //       tile.classList.remove('tile--flagged');
-  //     }
-  //   }
-  // }
 
   return (
-    <div className="App field">
-      {state.tiles.map( tile => <Tile key={tile.index} data={tile} openTile={openTile} setFlag={setFlag}/>)}
+    <div>
+      <div className='buttons'>
+        <div className='bombs'>{/*state.bombsCounter*/}</div>
+        <div className='newGame' />
+        <div className='timer'>{state.timer}</div>
+      </div>
+      <div className="App field">
+        {state.tiles.map( tile => {
+          return (<Tile
+            key={tile.index}
+            data={tile}
+            setGameOver={setGameOver}
+            openTile={openTile}
+            setFlag={setFlag}
+          />)}
+        )}
+      </div>
+      {state.isGameOver && <span>Game Over!</span>}
     </div>
-  );
+  )
 }
 
 export default App;
