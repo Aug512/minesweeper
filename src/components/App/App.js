@@ -123,7 +123,7 @@ function App() {
   const openTile = (index) => {
     const newState = {...state}
     newState.tiles.find( tile => {
-      if (index === tile.index && tile.number === 0) {
+      if (index === tile.index && tile.number === 0 && !tile.isBomb) {
         openTilesAround(tile.coords)
       }
       if (index === tile.index) {
@@ -133,36 +133,33 @@ function App() {
     setState(newState);
   }
 
-  const openTilesAround = (coords) => {
-    const emptyTilesAround = [];
+  const openTilesAround = (coords) => {       // form - `${x},${y}`
 
-    const tilesAround = (coords) => {
-    //    `${x},${y}`
-      const [x, y] = [coords[0], coords[2]]
+    const emptyTiles = new Set();
+
+    const openEightTiles = coords => {
       
+      const [x, y] = [coords[0], coords[2]]
+    
       const coordsAround = [
         `${+x-1},${+y-1}`,
         `${+x},${+y-1}`,
         `${+x+1},${+y-1}`,
         `${+x-1},${+y}`,
-        `${+x+1},${+y+1}`,
+        `${+x+1},${+y}`,
         `${+x-1},${+y+1}`,
         `${+x},${+y+1}`,
         `${+x+1},${+y+1}`,    
       ]
 
-      console.log(coords);
-      console.log(x + '+' + y);
-      console.log(coordsAround);
-
       const newState = {...state}
 
       coordsAround.forEach( coord => {
         newState.tiles.find( tile => {
-          if (tile.coords === coord) {
+          if (tile.coords === coord && !tile.isFlag) {
             tile.isOpen = true;
             if (tile.number === 0) {
-              emptyTilesAround.push(tile.coords)
+              emptyTiles.add(tile.coords)
             }
           }
         })
@@ -170,7 +167,24 @@ function App() {
 
       setState(newState);
     }
-    emptyTilesAround.length && emptyTilesAround.forEach( coord => openTilesAround(coord) )
+
+    openEightTiles(coords);
+
+    let initialLength = emptyTiles.length;
+
+    emptyTiles.forEach( coord => {
+      openEightTiles(coord)
+    })
+
+    while (emptyTiles.length !== initialLength) {
+      console.log('while Statement starts...')
+      console.log(emptyTiles)
+      emptyTiles.forEach( coord => {
+        openEightTiles(coord) 
+      })
+      initialLength = emptyTiles.length;
+    }
+
   }
 
   const setFlag = (index) => {
@@ -188,7 +202,7 @@ function App() {
       ...state,
       isGameOver: bool,
     })
-  }}
+  }
 
   useEffect( () => {
     initGame('test')
@@ -197,7 +211,7 @@ function App() {
   return (
     <div>
       <div className='buttons'>
-        <div className='bombs'>{state.bombsCounter}</div>
+        <div className='bombs'>{/*state.bombsCounter*/}</div>
         <div className='newGame' />
       </div>
       <div className="App field">
@@ -214,6 +228,6 @@ function App() {
       {state.isGameOver && <span>Game Over!</span>}
     </div>
   )
-          }
+}
 
 export default App;
