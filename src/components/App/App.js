@@ -1,4 +1,5 @@
 import React, { useEffect, useState} from 'react'
+import classNames from 'classnames'
 import Tile from '../Tile/Tile'
 
 function App() {
@@ -9,8 +10,9 @@ function App() {
     tiles: [],
     width: 5,
     height: 5,
-    difficulty: 'test',
+    difficulty: 'hard',
     bombsCounter: 4,
+    flagCounter: 0,
     isGameOver: false,
     timer: 0,
   }
@@ -22,28 +24,40 @@ function App() {
     if (difficulty === 'easy') {
       return {
         ...state,
+        bombs: [],
+        numbers: [],
+        tiles: [],
         width: 8,
         height: 8,
         bombsCounter: 10,
-        difficulty: difficulty,
+        isGameOver: false,
+        difficulty,
       }
     }
     if (difficulty === 'medium') {
       return {
         ...state,
+        bombs: [],
+        numbers: [],
+        tiles: [],
         width: 16,
         height: 16,
         bombsCounter: 40,
-        difficulty: difficulty,
+        isGameOver: false,
+        difficulty,
       }
     }
     if (difficulty === 'hard') {
       return {
         ...state,
+        bombs: [],
+        numbers: [],
+        tiles: [],
         width: 30,
         height: 16,
         bombsCounter: 99,
-        difficulty: difficulty,
+        isGameOver: false,
+        difficulty,
       }
     }
   }
@@ -72,18 +86,15 @@ function App() {
 
       do {
         bombsIndexes.add(Math.trunc(Math.random() * maxTiles))
-      } while (bombsIndexes.size <= bombsCounter)
+      } while (bombsIndexes.size < bombsCounter)
   
       bombsIndexes.forEach( index => {
-        console.log(index)
         newState.tiles.find( tile => {
           if (tile.index === index) {
             tile.isBomb = true;
           }
         })
       })
-      console.log(bombsIndexes)
-      console.log(newState)
     }
 
     generateBombs(newState.bombsCounter, boardSize)
@@ -91,21 +102,20 @@ function App() {
     newState.tiles.forEach((tile) => {
       tile.coords = `${x},${y}`;
       
-      // let random_boolean = Math.random() < 0.2; //true if rand < freq (0.2)
-      // if (random_boolean) {
-      //   newState.bombs.push(`${x},${y}`);      // origin
       if (tile.isBomb) {
         newState.bombs.push(`${x},${y}`);
-        if (x > 0) newState.numbers.push(`${x-1},${y}`);
-        if (x < state.width - 1) newState.numbers.push(`${x+1},${y}`);
-        if (y > 0) newState.numbers.push(`${x},${y-1}`);
-        if (y < state.height - 1) newState.numbers.push(`${x},${y+1}`);
-        
+
         if (x > 0 && y > 0) newState.numbers.push(`${x-1},${y-1}`);
-        if (x < state.width - 1 && y < state.height - 1) newState.numbers.push(`${x+1},${y+1}`);
-        
-        if (y > 0 && x < state.width - 1) newState.numbers.push(`${x+1},${y-1}`);
-        if (x > 0 && y < state.height - 1) newState.numbers.push(`${x-1},${y+1}`);
+        if (y > 0) newState.numbers.push(`${x},${y-1}`);
+        if (y > 0 && x < newState.width - 1) newState.numbers.push(`${x+1},${y-1}`);
+
+        if (x > 0) newState.numbers.push(`${x-1},${y}`);
+        if (x < newState.width - 1) newState.numbers.push(`${x+1},${y}`);
+
+        if (x > 0 && y < newState.height - 1) newState.numbers.push(`${x-1},${y+1}`);
+        if (y < newState.height - 1) newState.numbers.push(`${x},${y+1}`);
+        if (x < newState.width - 1 && y < newState.height - 1) newState.numbers.push(`${x+1},${y+1}`);
+
       }
       
       x++;
@@ -117,20 +127,13 @@ function App() {
     
     newState.numbers.forEach(num => {
       newState.tiles.find( tile => {
-        if (num === tile.coords) {
+        if (tile.coords === num) {
           tile.number++;
         }
       })
     });
-  
-    // newState.bombs.forEach(bomb => {
-    //   newState.tiles.find( tile => {
-    //     if (bomb === tile.coords) {
-    //       tile.isBomb = true;
-    //     }
-    //   }) 
-    // });
 
+    console.log(newState)
     setState(newState);
   }
 
@@ -138,7 +141,7 @@ function App() {
     const newState = {...state}
     newState.tiles.find( tile => {
       if (index === tile.index && tile.number === 0 && !tile.isBomb) {
-        openTilesAround(tile.coords)
+        openTilesAround(tile.coords, newState)
       }
       if (index === tile.index) {
         tile.isOpen = true;
@@ -147,13 +150,13 @@ function App() {
     setState(newState);
   }
 
-  const openTilesAround = (coords) => {       // form - `${x},${y}`
+  const openTilesAround = (coords, state) => {       // form - `${x},${y}`
 
     const emptyTiles = new Set();
 
     const openEightTiles = coords => {
       
-      const [x, y] = [coords[0], coords[2]]
+      const [x, y] = coords.split(',')
     
       const coordsAround = [
         `${+x-1},${+y-1}`,
@@ -178,27 +181,20 @@ function App() {
           }
         })
       })
-
-      setState(newState);
     }
 
     openEightTiles(coords);
 
-    let initialLength = emptyTiles.length;
+    let initialLength = 0;
 
-    emptyTiles.forEach( coord => {
-      openEightTiles(coord)
-    })
-
-    while (emptyTiles.length !== initialLength) {
+    while (emptyTiles.size !== initialLength) {
       console.log('while Statement starts...')
       console.log(emptyTiles)
+      initialLength = emptyTiles.size;
       emptyTiles.forEach( coord => {
         openEightTiles(coord) 
       })
-      initialLength = emptyTiles.length;
     }
-
   }
 
   const setFlag = (index) => {
@@ -206,6 +202,11 @@ function App() {
     newState.tiles.find( tile => {
       if (index === tile.index) {
         tile.isFlag = !tile.isFlag;
+        if (tile.isFlag) {
+          newState.flagCounter += 1
+        } else {
+          newState.flagCounter -= 1
+        }
       }
     })
     setState(newState);
@@ -224,16 +225,42 @@ function App() {
 
   return (
     <div>
-      <div className='buttons'>
-        <div className='bombs'>{/*state.bombsCounter*/}</div>
-        <div className='newGame' />
-        <div className='timer'>{state.timer}</div>
+      <div className='settings'>
+        <div className='flags'><span>{state.bombsCounter - state.flagCounter}</span></div>
+        <div className='newGame'>
+          <button 
+            onClick={ () => {
+              initGame(state.difficulty)
+            }}
+          >
+            New Game
+          </button>
+        </div>
+        <div>
+        <p style={{marginBottom: '0.3em'}}>Выберите сложность:</p>
+          <select onChange={ evt => initGame(evt.target.value)}>
+            <option value='easy'>Новичок</option>
+            <option value='medium'>Любитель</option>
+            <option value='hard'>Профессионал</option>
+          </select>
+        </div>
       </div>
-      <div className="App field">
+      <div className={
+        classNames({
+          'app': true,
+          'field': true,
+          'easy': state.difficulty == 'easy',
+          'medium': state.difficulty == 'medium',
+          'hard': state.difficulty == 'hard',
+          // [state.difficulty]: true,
+        })
+      }>
+      {/* <div className={`app field ${state.difficulty}`}> */}
         {state.tiles.map( tile => {
           return (<Tile
             key={tile.index}
             data={tile}
+            isGameOver={state.isGameOver}
             setGameOver={setGameOver}
             openTile={openTile}
             setFlag={setFlag}
