@@ -2,22 +2,22 @@ import React from 'react'
 import classNames from 'classnames'
 // import flagIcon from '...'
 
-const Tile = ( { data, setGameOver, openTile, setFlag } ) => {
+const Tile = ( { data, isGameOver, setGameOver, openTile, setFlag } ) => {
 
   return(
     <div
       onClick={ () => {
-        if (!data.isFlag) {
+        if (!data.isFlag && !isGameOver) {
           openTile(data.index)
         }
-        if(data.isBomb) {
+        if(data.isBomb && !isGameOver) {
           setGameOver(true)
         }
        }
       }
       onContextMenu={ evt => {
         evt.preventDefault();
-        if (!data.isOpen || data.isFlag) {
+        if ((!data.isOpen || data.isFlag) && !isGameOver) {
           setFlag(data.index)
         }
       }}
