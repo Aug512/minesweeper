@@ -8,13 +8,12 @@ function App() {
     bombs: [],
     numbers: [],
     tiles: [],
-    width: 5,
-    height: 5,
-    difficulty: 'hard',
-    bombsCounter: 4,
+    width: 16,
+    height: 16,
+    difficulty: 'medium',
+    bombsCounter: 40,
     flagCounter: 0,
     isGameOver: false,
-    timer: 0,
   }
 
   const [state, setState] = useState(initailState);
@@ -30,8 +29,11 @@ function App() {
         width: 8,
         height: 8,
         bombsCounter: 10,
+        flagCounter: 0,
+        message: '',
         isGameOver: false,
         difficulty,
+        detonatedId: null,
       }
     }
     if (difficulty === 'medium') {
@@ -43,8 +45,11 @@ function App() {
         width: 16,
         height: 16,
         bombsCounter: 40,
+        flagCounter: 0,
+        message: '',
         isGameOver: false,
         difficulty,
+        detonatedId: null,
       }
     }
     if (difficulty === 'hard') {
@@ -56,8 +61,11 @@ function App() {
         width: 30,
         height: 16,
         bombsCounter: 99,
+        flagCounter: 0,
+        message: '',
         isGameOver: false,
         difficulty,
+        detonatedId: null,
       }
     }
   }
@@ -133,7 +141,6 @@ function App() {
       })
     });
 
-    console.log(newState)
     setState(newState);
   }
 
@@ -150,7 +157,7 @@ function App() {
     setState(newState);
   }
 
-  const openTilesAround = (coords, state) => {       // form - `${x},${y}`
+  const openTilesAround = (coords, state) => {
 
     const emptyTiles = new Set();
 
@@ -188,8 +195,6 @@ function App() {
     let initialLength = 0;
 
     while (emptyTiles.size !== initialLength) {
-      console.log('while Statement starts...')
-      console.log(emptyTiles)
       initialLength = emptyTiles.size;
       emptyTiles.forEach( coord => {
         openEightTiles(coord) 
@@ -212,10 +217,37 @@ function App() {
     setState(newState);
   }
 
-  const setGameOver = (bool) => {
+  const setGameOver = (bool, message, index) => {
+    showBombs();
     setState({
       ...state,
       isGameOver: bool,
+      message: message,
+      detonatedId: index || null,
+    })
+  }
+
+  const showBombs = () => {
+    const newState = {...state};
+    newState.tiles.forEach( tile => {
+      if (tile.isBomb) {
+        tile.isFlag = false;
+        tile.isOpen = true;
+      }
+    })
+    setState(newState)
+  }
+
+  const winGame = () => {
+    const newState = {...state}
+    let openTilesCounter = 0;
+    newState.tiles.forEach( tile => {
+      if (tile.isOpen && !tile.isBomb) {
+        openTilesCounter +=1;
+      }
+      if (openTilesCounter === (newState.tiles.length - newState.bombsCounter)) {
+        setGameOver(true, 'Победа!')
+      }
     })
   }
 
@@ -226,7 +258,9 @@ function App() {
   return (
     <div>
       <div className='settings'>
-        <div className='flags'><span>{state.bombsCounter - state.flagCounter}</span></div>
+        <div className='flags'>
+          <div className='flagsCounter' title='Осталось мин'>{state.bombsCounter - state.flagCounter}</div>
+        </div>
         <div className='newGame'>
           <button 
             onClick={ () => {
@@ -236,12 +270,12 @@ function App() {
             New Game
           </button>
         </div>
-        <div>
-        <p style={{marginBottom: '0.3em'}}>Выберите сложность:</p>
+        <div className='difficulty'>
+          <p style={{marginTop: '0.3em', marginBottom: '0.3em'}}>Выберите сложность:</p>
           <select onChange={ evt => initGame(evt.target.value)}>
-            <option value='easy'>Новичок</option>
-            <option value='medium'>Любитель</option>
-            <option value='hard'>Профессионал</option>
+            <option value='easy' title='Поле 8х8, 10 мин'>Новичок</option>
+            <option value='medium' title='Поле 16х16, 40 мин'>Любитель</option>
+            <option value='hard' title='Поле 30х16, 99 мин'>Профессионал</option>
           </select>
         </div>
       </div>
@@ -249,25 +283,41 @@ function App() {
         classNames({
           'app': true,
           'field': true,
-          'easy': state.difficulty == 'easy',
-          'medium': state.difficulty == 'medium',
-          'hard': state.difficulty == 'hard',
-          // [state.difficulty]: true,
+          'easy': state.difficulty === 'easy',
+          'medium': state.difficulty === 'medium',
+          'hard': state.difficulty === 'hard',
         })
       }>
-      {/* <div className={`app field ${state.difficulty}`}> */}
         {state.tiles.map( tile => {
           return (<Tile
             key={tile.index}
             data={tile}
             isGameOver={state.isGameOver}
+            detonatedId={state.detonatedId}
             setGameOver={setGameOver}
+            winGame={winGame}
             openTile={openTile}
             setFlag={setFlag}
           />)}
         )}
+        {state.isGameOver && 
+          <div
+            className={
+              classNames({
+                'messageBox': true,
+                'message__win': (state.message === 'Победа!'),
+                'message__lose': (state.message === 'Поражение!'),
+              })
+            }
+            onClick={ () => {
+              const box = document.querySelector('.messageBox');
+              box.style='display: none';
+            }}
+          >
+            <span>{state.message}</span>
+          </div>
+        }
       </div>
-      {state.isGameOver && <span>Game Over!</span>}
     </div>
   )
 }

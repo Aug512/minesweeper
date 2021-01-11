@@ -1,8 +1,9 @@
 import React from 'react'
 import classNames from 'classnames'
-// import flagIcon from '...'
+import flagIcon from '../../images/mine.png'
+import bombIcon from '../../images/bomb.png'
 
-const Tile = ( { data, isGameOver, setGameOver, openTile, setFlag } ) => {
+const Tile = ( { data, isGameOver, detonatedId, setGameOver, winGame, openTile, setFlag } ) => {
 
   return(
     <div
@@ -10,9 +11,10 @@ const Tile = ( { data, isGameOver, setGameOver, openTile, setFlag } ) => {
         if (!data.isFlag && !isGameOver) {
           openTile(data.index)
         }
-        if(data.isBomb && !isGameOver) {
-          setGameOver(true)
+        if (!data.isFlag && data.isBomb && !isGameOver) {
+          setGameOver(true, 'Поражение!', data.index)
         }
+        winGame()
        }
       }
       onContextMenu={ evt => {
@@ -37,11 +39,12 @@ const Tile = ( { data, isGameOver, setGameOver, openTile, setFlag } ) => {
           'color__eight': !data.isFlag && !data.isBomb && data.number === 8,
           'bomb': data.isOpen && data.isBomb,
           'flag': data.isFlag,
+          'detonated': (detonatedId === data.index)
         })
       }>
-        {data.isFlag && 'F'}
+        {data.isFlag && <img src={flagIcon} alt='F' title='Флаг'/>}
         {data.isOpen && !data.isBomb && data.number !== 0 && data.number}
-        {data.isOpen && data.isBomb && 'B'}
+        {data.isOpen && data.isBomb && <img src={bombIcon} alt='B' title='Мина'/>}
       </div>
     </div>
   )
