@@ -1,11 +1,16 @@
+@font-face {
+  font-family: RussoOne; /* Имя шрифта */
+  src: url(./fonts/RussoOne-Regular.ttf); /* Путь к файлу со шрифтом */
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'RussoOne', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #c4c4c4;
+  background-color: #f3f3f3;
 }
 
 .field {
@@ -14,6 +19,7 @@ body {
   background-color: #fff;
   display: flex;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .easy {
@@ -34,14 +40,14 @@ body {
 .tile {
   width: 18px;
   height: 18px;
-  background-color: #b8b8b8;
-  border: 1px solid black;
+  background-color: rgb(192, 192, 192);
+  border: 1px solid rgb(140, 140, 140);
   margin: 0;
   display: inline-block;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
-  font-weight: bold;
+  font-size: 0.9em;
 }
 
 .tile__open {
@@ -51,7 +57,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #c4c4c4;
+  background-color: rgb(192, 192, 192);
 }
 
 .tile__closed {
@@ -61,49 +67,48 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-top: 3px solid #d9d9d9;
-  border-left: 3px solid #d9d9d9;
-  border-bottom: 3px solid #6e6e6e;
-  border-right: 3px solid #6e6e6e;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid rgb(128, 128, 128);
+  border-right: 2px solid rgb(128, 128, 128);
 }
 
 /* Цвета не оч подходят, нужно пофиксить с колориметром с макбуче (в тч цвета клеток) */
 
 .color__one {
-  color: #3498db;
+  color: rgb(30, 22, 246);
 }
 
 .color__two {
-  color: #2ecc71
+  color: rgb(0, 128, 34)
 }
 
 .color__three {
-  color: #e74c3c
+  color: rgb(255, 0, 19)
 }
 
 .color__four {
-  color: #9b59b6
+  color: rgb(9, 6, 123)
 }
 
 .color__five {
-  color: #f1c40f
+  color: rgb(130, 0, 5)
 }
 
 .color__six {
-  color: #1abc9c
+  color: rgb(0, 129, 128)
 }
 
 .color__seven {
-  color: #34495e
+  color: #000
 }
 
 .color__eight {
-  color: #7f8c8d
+  color: rgb(128, 128, 128)
 }
 
 .bomb {
   color: #000;
-  background-color: #D00;
 }
 
 .settings {
@@ -111,5 +116,70 @@ body {
   justify-content: space-between;
   align-items: center;
   width: 500px;
+  height: 60px;
   margin: 0 auto;
+  margin-top: 2rem;
+}
+
+.flags {
+  width: 200px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flagsCounter {
+  background-color: #c4c4c4;
+  width: 36px;
+  height: 24px;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid rgb(128, 128, 128);
+  border-right: 2px solid rgb(128, 128, 128);
+  color: rgba(255, 0, 19, .9);
+  text-align: right;
+  font-size: 1.3em;
+}
+
+.newGame {
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.difficulty {
+  width: 200px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-self: flex-start;
+}
+
+.messageBox {
+  position: absolute;
+  width: 100%;
+  height: 60px;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.message__win {
+  background-color: rgba(0, 0, 190, .7);
+}
+
+.message__lose {
+  background-color: rgba(190, 0, 0, .7);
+}
+
+.detonated {
+  background-color: rgb(255, 0, 19);
 }
