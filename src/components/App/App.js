@@ -223,7 +223,7 @@ function App() {
       ...state,
       isGameOver: bool,
       message: message,
-      detonatedId: index || null,
+      detonatedId: index,
     })
   }
 
