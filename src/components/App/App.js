@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from 'react'
-import classNames from 'classnames'
-import Tile from '../Tile/Tile'
+import Settings from '../Settings/Settings'
+import Grid from '../Grid/Grid'
 
 function App() {
 
@@ -257,67 +257,8 @@ function App() {
 
   return (
     <div>
-      <div className='settings'>
-        <div className='flags'>
-          <div className='flagsCounter' title='Осталось мин'>{state.bombsCounter - state.flagCounter}</div>
-        </div>
-        <div className='newGame'>
-          <button 
-            onClick={ () => {
-              initGame(state.difficulty)
-            }}
-          >
-            New Game
-          </button>
-        </div>
-        <div className='difficulty'>
-          <p style={{marginTop: '0.3em', marginBottom: '0.3em'}}>Выберите сложность:</p>
-          <select onChange={ evt => initGame(evt.target.value)}>
-            <option value='easy' title='Поле 8х8, 10 мин'>Новичок</option>
-            <option value='medium' title='Поле 16х16, 40 мин'>Любитель</option>
-            <option value='hard' title='Поле 30х16, 99 мин'>Профессионал</option>
-          </select>
-        </div>
-      </div>
-      <div className={
-        classNames({
-          'app': true,
-          'field': true,
-          'easy': state.difficulty === 'easy',
-          'medium': state.difficulty === 'medium',
-          'hard': state.difficulty === 'hard',
-        })
-      }>
-        {state.tiles.map( tile => {
-          return (<Tile
-            key={tile.index}
-            data={tile}
-            isGameOver={state.isGameOver}
-            detonatedId={state.detonatedId}
-            setGameOver={setGameOver}
-            winGame={winGame}
-            openTile={openTile}
-            setFlag={setFlag}
-          />)}
-        )}
-        {state.isGameOver && 
-          <div
-            className={
-              classNames({
-                'messageBox': true,
-                'message__win': (state.message === 'Победа!'),
-                'message__lose': (state.message === 'Поражение!'),
-              })
-            }
-            onClick={ () => {
-              const box = document.querySelector('.messageBox');
-              box.style='display: none';
-            }}
-          >
-            <span>{state.message}</span>
-          </div>
-        }
-      </div>
+      <Settings />
+      <Grid />
     </div>
   )
 }
