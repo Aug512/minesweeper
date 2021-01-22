@@ -17,7 +17,7 @@ const setDifficulty = (difficulty) => {
         type: SET_DIFFICULTY_HARD,
       }
     default:
-      return {} 
+      break;
   }
 }
 
