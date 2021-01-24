@@ -1,0 +1,3 @@
+const START_NEW_GAME = 'START_NEW_GAME'
+
+export default START_NEW_GAME

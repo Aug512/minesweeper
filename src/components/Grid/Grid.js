@@ -1,37 +1,50 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { connect } from 'react-redux'
 import Tile from '../Tile/Tile'
 import classNames from 'classnames'
 
-const Grid = () => {
+const mapStateToProps = state => {
+  return {
+    tiles: state.tiles,
+    isGameOver: state.isGameOver,
+    difficulty: state.difficulty,
+    message: state.message,
+    detonatedId: state.detonatedId,
+  }
+}
+
+const Grid = (props) => {
+
   return (
     <div className={
       classNames({
         'app': true,
         'field': true,
-        'easy': state.difficulty === 'easy',
-        'medium': state.difficulty === 'medium',
-        'hard': state.difficulty === 'hard',
+        'easy': props.difficulty === 'easy',
+        'medium': props.difficulty === 'medium',
+        'hard': props.difficulty === 'hard',
       })
     }>
-      {state.tiles.map( tile => {
+      {props.tiles.map( tile => {
         return (<Tile
           key={tile.index}
-          data={tile}
-          isGameOver={state.isGameOver}
-          detonatedId={state.detonatedId}
-          setGameOver={setGameOver}
-          winGame={winGame}
-          openTile={openTile}
-          setFlag={setFlag}
+          // id={tile.index}
+          tile={tile}
+          // isGameOver={props.isGameOver}
+          // detonatedId={props.detonatedId}
+          // setGameOver={setGameOver}
+          // winGame={winGame}
+          // openTile={openTile}
+          // setFlag={setFlag}
         />)}
       )}
-      {state.isGameOver && 
+      {props.isGameOver && 
         <div
           className={
             classNames({
               'messageBox': true,
-              'message__win': (state.message === 'Победа!'),
-              'message__lose': (state.message === 'Поражение!'),
+              'message__win': (props.message === 'Победа!'),
+              'message__lose': (props.message === 'Поражение!'),
             })
           }
           onClick={ () => {
@@ -39,11 +52,11 @@ const Grid = () => {
             box.style='display: none';
           }}
         >
-          <span>{state.message}</span>
+          <span>{props.message}</span>
         </div>
       }
     </div>
   )
 }
 
-export default Grid
+export default connect(mapStateToProps, null)(Grid)

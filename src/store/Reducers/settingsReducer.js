@@ -3,6 +3,10 @@ import SET_DIFFICULTY_MEDIUM from '../Actions/SET_DIFFICULTY_MEDIUM'
 import SET_DIFFICULTY_HARD from '../Actions/SET_DIFFICULTY_HARD'
 import SET_FLAG from '../Actions/SET_FLAG'
 import REMOVE_FLAG from '../Actions/REMOVE_FLAG'
+import START_NEW_GAME from '../Actions/START_NEW_GAME'
+import OPEN_TILE from '../Actions/OPEN_TILE'
+import WIN_GAME from '../Actions/WIN_GAME'
+import LOSE_GAME from '../Actions/LOSE_GAME'
 
 const settingsReducer = (state, action) => {
 
@@ -14,7 +18,6 @@ const settingsReducer = (state, action) => {
     for (let i = 0; i < boardSize; i++) {
       tiles.push({
         index: i,
-
         isBomb: false,
         number: 0,
         isOpen: false,
@@ -77,50 +80,119 @@ const settingsReducer = (state, action) => {
     return tiles;
   }
 
+  const openSelectedTile = (id) => {
+    const newTiles = [...state.tiles]
+    newTiles[id] = {...state.tiles[id]}
+    newTiles[id].isOpen = true;
+    console.log('is equal? ' + (newTiles[id] === state.tiles[id]))
+    return newTiles
+  }
+
+  const toggleFlagState = (id, flagState) => {
+    const newTiles = [...state.tiles]
+    newTiles[id] = {...state.tiles[id]}
+    newTiles[id].isFlag = flagState
+    return newTiles
+  }
+
+  const showBombs = () => {
+    const newTiles = state.tiles.map( tile => {
+      if (!tile.isBomb) {
+        return tile
+      } else return {
+        ...tile,
+        isFlag: false,
+        isOpen: true,
+      }
+    })
+    return newTiles
+  }
+
   switch (action.type) {
     case SET_DIFFICULTY_EASY:
       return {
+        ...state,
         width: 8,
         height: 8,
         bombsCounter: 10,
-        tiles: initTiles(this.width, this.height, this.bombsCounter),
+        tiles: initTiles(8, 8, 10),
         difficulty: 'easy',
         flagCounter: 0,
         isGameOver: false,
         detonatedId: null,
       }
+
     case SET_DIFFICULTY_MEDIUM:
       return {
+        ...state,
         width: 16,
         height: 16,
         bombsCounter: 40,
-        tiles: initTiles(this.width, this.height, this.bombsCounter),
+        tiles: initTiles(16, 16, 40),
         difficulty: 'medium',
         flagCounter: 0,
         isGameOver: false,
         detonatedId: null,
       }
+
     case SET_DIFFICULTY_HARD:
       return {
+        ...state,
         width: 30,
         height: 16,
         bombsCounter: 99,
-        tiles: initTiles(this.width, this.height, this.bombsCounter),
+        tiles: initTiles(30, 16, 99),
         difficulty: 'hard',
         flagCounter: 0,
         isGameOver: false,
         detonatedId: null,
       }
+
+    case START_NEW_GAME:
+      return {
+        ...state,
+        tiles: initTiles(state.width, state.height, state.bombsCounter),
+        flagCounter: 0,
+        isGameOver: false,
+        detonatedId: null,
+      }
+
     case SET_FLAG:
       return {
         ...state,
-        flagCounter: flagCounter + 1,
-      }
+        tiles: toggleFlagState(action.id, true),
+        flagCounter: state.flagCounter + 1,
+      };
+    
     case REMOVE_FLAG:
       return {
         ...state,
-        flagCounter: flagCounter - 1,
+        tiles: toggleFlagState(action.id, false),
+        flagCounter: state.flagCounter - 1,
+      };
+
+    case OPEN_TILE:
+      return {
+        ...state,
+        tiles: openSelectedTile(action.id),
       }
+
+    case LOSE_GAME:
+      return {
+        ...state,
+        tiles: showBombs(),
+        isGameOver: true,
+        message: 'Поражение!',
+        detonatedId: action.detonatedId,
+      }
+
+    case WIN_GAME:
+      return {
+        ...state,
+        isGameOver: true,
+        message: 'Победа!',
+      }
+
     default:
       return state;
   }
