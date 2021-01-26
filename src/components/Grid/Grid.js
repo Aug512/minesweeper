@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import Tile from '../Tile/Tile'
 import classNames from 'classnames'
@@ -28,14 +28,7 @@ const Grid = (props) => {
       {props.tiles.map( tile => {
         return (<Tile
           key={tile.index}
-          // id={tile.index}
           tile={tile}
-          // isGameOver={props.isGameOver}
-          // detonatedId={props.detonatedId}
-          // setGameOver={setGameOver}
-          // winGame={winGame}
-          // openTile={openTile}
-          // setFlag={setFlag}
         />)}
       )}
       {props.isGameOver && 

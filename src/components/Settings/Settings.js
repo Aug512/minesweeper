@@ -15,7 +15,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setDifficulty: (diff) => dispatch(setDifficulty(diff)),
-    startNewGame: () => startNewGame,
+    startNewGame: () => dispatch(startNewGame()),
   }
 }
 

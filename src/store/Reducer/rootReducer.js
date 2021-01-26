@@ -1,8 +1,9 @@
 import SET_DIFFICULTY_EASY from '../Actions/SET_DIFFICULTY_EASY'
 import SET_DIFFICULTY_MEDIUM from '../Actions/SET_DIFFICULTY_MEDIUM'
 import SET_DIFFICULTY_HARD from '../Actions/SET_DIFFICULTY_HARD'
+import SET_QUESTION from '../Actions/SET_QUESTION'
 import SET_FLAG from '../Actions/SET_FLAG'
-import REMOVE_FLAG from '../Actions/REMOVE_FLAG'
+import SET_NOTHING from '../Actions/SET_NOTHING'
 import START_NEW_GAME from '../Actions/START_NEW_GAME'
 import OPEN_TILE from '../Actions/OPEN_TILE'
 import WIN_GAME from '../Actions/WIN_GAME'
@@ -21,7 +22,7 @@ const settingsReducer = (state, action) => {
         isBomb: false,
         number: 0,
         isOpen: false,
-        isFlag: false,
+        overlay: 'none',
       })
     }
 
@@ -34,8 +35,6 @@ const settingsReducer = (state, action) => {
     bombsIndexes.forEach( index => {
       tiles[index].isBomb = true;
     })
-
-    //editing starts
 
     const numbers = [];
 
@@ -75,8 +74,6 @@ const settingsReducer = (state, action) => {
       })
     });
 
-    //editing end
-
     return tiles;
   }
 
@@ -84,15 +81,32 @@ const settingsReducer = (state, action) => {
     const newTiles = [...state.tiles]
     newTiles[id] = {...state.tiles[id]}
     newTiles[id].isOpen = true;
-    console.log('is equal? ' + (newTiles[id] === state.tiles[id]))
     return newTiles
   }
 
-  const toggleFlagState = (id, flagState) => {
+  const toggleFlagState = (id) => {
     const newTiles = [...state.tiles]
     newTiles[id] = {...state.tiles[id]}
-    newTiles[id].isFlag = flagState
+    if (newTiles[id].overlay === 'none') {
+      newTiles[id].overlay = 'flag'
+    } else if (newTiles[id].overlay === 'flag') {
+      newTiles[id].overlay = 'question'
+    } else {
+      newTiles[id].overlay = 'none'
+    }
+    
     return newTiles
+  }
+
+  const getFlagsCounter = (tileState) => {
+    switch (tileState) {
+      case 'flag':
+        return 1
+      case 'question':
+        return -1
+      default:
+        break;
+    }
   }
 
   const showBombs = () => {
@@ -101,7 +115,7 @@ const settingsReducer = (state, action) => {
         return tile
       } else return {
         ...tile,
-        isFlag: false,
+        overlay: 'none',
         isOpen: true,
       }
     })
@@ -160,16 +174,29 @@ const settingsReducer = (state, action) => {
     case SET_FLAG:
       return {
         ...state,
-        tiles: toggleFlagState(action.id, true),
+        tiles: toggleFlagState(action.id),
         flagCounter: state.flagCounter + 1,
       };
     
-    case REMOVE_FLAG:
+    case SET_QUESTION:
       return {
         ...state,
-        tiles: toggleFlagState(action.id, false),
+        tiles: toggleFlagState(action.id),
         flagCounter: state.flagCounter - 1,
       };
+
+    case SET_NOTHING:
+      return {
+        ...state,
+        tiles: toggleFlagState(action.id)
+      };
+
+    // case TOGGLE_FLAG:
+    //   return {
+    //     ...state,
+    //     tiles: toggleFlagState(action.id),
+    //     flagCounter: state.flagCounter + getFlagsCounter(this.tiles[action.id].overlay)
+    //   }
 
     case OPEN_TILE:
       return {
