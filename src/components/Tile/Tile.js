@@ -124,7 +124,7 @@ const Tile = (props) => {
         })
       }>
         {props.tile.overlay === 'flag' && <img src={flagIcon} alt='F' title='Флаг'/>}
-        {props.tile.overlay === 'question' && '?'}
+        {!props.tile.isOpen && props.tile.overlay === 'question' && '?'}
         {props.tile.isOpen && !props.tile.isBomb && props.tile.number !== 0 && props.tile.number}
         {props.tile.isOpen && props.tile.isBomb && <img src={bombIcon} alt='B' title='Мина'/>}
       </div>

@@ -80,7 +80,8 @@ const settingsReducer = (state, action) => {
   const openSelectedTile = (id) => {
     const newTiles = [...state.tiles]
     newTiles[id] = {...state.tiles[id]}
-    newTiles[id].isOpen = true;
+    newTiles[id].isOpen = true
+    newTiles[id].overlay = 'none'
     return newTiles
   }
 
@@ -190,13 +191,6 @@ const settingsReducer = (state, action) => {
         ...state,
         tiles: toggleFlagState(action.id)
       };
-
-    // case TOGGLE_FLAG:
-    //   return {
-    //     ...state,
-    //     tiles: toggleFlagState(action.id),
-    //     flagCounter: state.flagCounter + getFlagsCounter(this.tiles[action.id].overlay)
-    //   }
 
     case OPEN_TILE:
       return {
