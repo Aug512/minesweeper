@@ -99,17 +99,6 @@ const settingsReducer = (state, action) => {
     return newTiles
   }
 
-  const getFlagsCounter = (tileState) => {
-    switch (tileState) {
-      case 'flag':
-        return 1
-      case 'question':
-        return -1
-      default:
-        break;
-    }
-  }
-
   const showBombs = () => {
     const newTiles = state.tiles.map( tile => {
       if (!tile.isBomb) {

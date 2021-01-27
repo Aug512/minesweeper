@@ -40,7 +40,36 @@ const Tile = (props) => {
     }
   }
 
-  const openTilesAround = (coords, state) => {
+  const openCheckedTiles = (tile, tiles, coords) => {
+
+    const flagsAround = []
+    const [x, y] = coords.split(',')
+    
+    const coordsAround = [
+      `${+x-1},${+y-1}`,
+      `${+x},${+y-1}`,
+      `${+x+1},${+y-1}`,
+      `${+x-1},${+y}`,
+      `${+x+1},${+y}`,
+      `${+x-1},${+y+1}`,
+      `${+x},${+y+1}`,
+      `${+x+1},${+y+1}`,    
+    ]
+
+    coordsAround.forEach( coord => {
+      tiles.find( tile => {
+        if (tile.coords === coord && tile.overlay === 'flag') {
+          flagsAround.push('flag')
+        }
+      })
+    })
+
+    if (flagsAround.length === tile.number) {
+      openTilesAround(coords, tiles)
+    }
+  }
+
+  const openTilesAround = (coords, tiles) => {
 
     const emptyTiles = new Set();
 
@@ -60,12 +89,14 @@ const Tile = (props) => {
       ]
 
       coordsAround.forEach( coord => {
-        state.tiles.find( tile => {
+        tiles.find( tile => {
           if (tile.coords === coord && tile.overlay !== 'flag') {
-            tile.isOpen = true;
-            tile.overlay = 'none'
+            props.openTile(tile.index)
             if (tile.number === 0) {
               emptyTiles.add(tile.coords)
+            }
+            if (tile.isBomb) {
+              props.endGame('lose', tile.index) 
             }
           }
         })
@@ -80,22 +111,28 @@ const Tile = (props) => {
       initialLength = emptyTiles.size;
       emptyTiles.forEach( coord => {
         openEightTiles(coord) 
+        checkWin()
       })
     }
   }
 
   return(
     <div
-      onClick={ () => {
+      onClick={ (e) => {
         if (props.tile.overlay !== 'flag' && !props.isGameOver) {
           props.openTile(props.tile.index)
           checkWin()
           if (props.tile.number === 0 && !props.tile.isBomb) {
-            openTilesAround(props.tile.coords, props)
+            openTilesAround(props.tile.coords, props.tiles)
           }
         }
         if (props.tile.overlay !== 'flag' && props.tile.isBomb && !props.isGameOver) {
           props.endGame('lose', props.tile.index) 
+        }
+      }}
+      onDoubleClick={ () => {
+        if (props.tile.isOpen) {
+          openCheckedTiles(props.tile, props.tiles, props.tile.coords)
         }
       }}
       onContextMenu={ evt => {
