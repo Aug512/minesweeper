@@ -11,6 +11,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f3f3f3;
+  user-select: none;
 }
 
 .field {
@@ -72,8 +73,6 @@ body {
   border-bottom: 2px solid rgb(128, 128, 128);
   border-right: 2px solid rgb(128, 128, 128);
 }
-
-/* Цвета не оч подходят, нужно пофиксить с колориметром с макбуче (в тч цвета клеток) */
 
 .color__one {
   color: rgb(30, 22, 246);
@@ -182,4 +181,14 @@ body {
 
 .detonated {
   background-color: rgb(255, 0, 19);
+}
+
+.flagIcon,
+.bombIcon {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

@@ -27,6 +27,18 @@ const mapDispatchToProps = (dispatch) => {
 
 const Tile = (props) => {
 
+  let timerStart = 0;
+
+  const initTouchTimer = () => {
+    const timerStart = Date.now()
+    return timerStart
+  }
+
+  const checkTouchTimer = (delay) => {
+    const touchEnd = Date.now()
+    return (touchEnd - timerStart > delay) ? true : false
+  }
+  
   const checkWin = () => {
     let openTilesCounter = 1;
 
@@ -141,6 +153,14 @@ const Tile = (props) => {
           props.toggleFlag(props.tile.index, props.tile.overlay)
         }
       }}
+      onTouchStart={ e => {
+        e.preventDefault()
+        timerStart = initTouchTimer()
+      }}
+      onTouchEnd={ () => {
+        const response = checkTouchTimer(500)
+        if (response && !props.tile.isOpen && !props.isGameOver) {props.toggleFlag(props.tile.index, props.tile.overlay)}
+      }}
       className='tile'
     >
       <div className={
@@ -160,10 +180,10 @@ const Tile = (props) => {
           'detonated': (props.detonatedId === props.tile.index)
         })
       }>
-        {props.tile.overlay === 'flag' && <img src={flagIcon} alt='F' title='Флаг'/>}
+        {props.tile.overlay === 'flag' && <img src={flagIcon} alt='F' title='Флаг' className='flagIcon' />}
         {!props.tile.isOpen && props.tile.overlay === 'question' && '?'}
         {props.tile.isOpen && !props.tile.isBomb && props.tile.number !== 0 && props.tile.number}
-        {props.tile.isOpen && props.tile.isBomb && <img src={bombIcon} alt='B' title='Мина'/>}
+        {props.tile.isOpen && props.tile.isBomb && <img src={bombIcon} alt='B' title='Мина' className='bombIcon' />}
       </div>
     </div>
   )
