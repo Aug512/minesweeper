@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import flagIcon from '../../images/mine.png'
@@ -14,6 +14,8 @@ const mapStateToProps = (state, ownProps) => {
     bombsCounter: state.bombsCounter,
     tile: ownProps.tile,
     tiles: state.tiles,
+    width: state.width,
+    height: state.height,
   }
 }
 
@@ -27,6 +29,8 @@ const mapDispatchToProps = (dispatch) => {
 
 const Tile = (props) => {
 
+  useEffect( () => checkWin(props.tiles), [props.tiles])
+
   let timerStart = 0;
 
   const initTouchTimer = () => {
@@ -38,11 +42,11 @@ const Tile = (props) => {
     const touchEnd = Date.now()
     return (touchEnd - timerStart > delay) ? true : false
   }
-  
-  const checkWin = () => {
-    let openTilesCounter = 1;
 
-    props.tiles.forEach( tile => {
+  const checkWin = tiles => {
+    let openTilesCounter = 0;
+
+    tiles.forEach( tile => {
       if (tile.isOpen && !tile.isBomb) {
         openTilesCounter += 1;
       }
@@ -52,66 +56,70 @@ const Tile = (props) => {
     }
   }
 
-  const openCheckedTiles = (tile, tiles, coords) => {
+  const getCoordsAround = coords => {
 
-    const flagsAround = []
-    const [x, y] = coords.split(',')
+    const x = coords[0]
+    const y = coords[1]
+
+    const coordsAround = []
+
+    if (+x - 1 >= 0 && +y - 1 >= 0) coordsAround.push([+x - 1, +y - 1])
+    if (+y - 1 >= 0) coordsAround.push([+x, +y - 1])
+    if (+x + 1 < props.width && +y - 1 >= 0) coordsAround.push([+x + 1, +y - 1])
+    if (+x - 1 >= 0) coordsAround.push([+x - 1, +y])
+    if (+x + 1 < props.width) coordsAround.push([+x + 1, +y])
+    if (+x - 1 >= 0 && +y + 1 < props.height) coordsAround.push([+x - 1, +y + 1])
+    if (+y + 1 < props.height) coordsAround.push([+x, +y + 1])
+    if (+x + 1 < props.width && +y + 1 < props.height) coordsAround.push([+x + 1, +y + 1])
+
+    return coordsAround
+  }
+
+  const getIndex = (coords) => {
+    return (((coords[1] <= 0) ? 0 : coords[1] * props.width) + coords[0])
+  }
+
+  const openCheckedTiles = (tile, coords) => {
+
+    let flagsCounter = 0
     
-    const coordsAround = [
-      `${+x-1},${+y-1}`,
-      `${+x},${+y-1}`,
-      `${+x+1},${+y-1}`,
-      `${+x-1},${+y}`,
-      `${+x+1},${+y}`,
-      `${+x-1},${+y+1}`,
-      `${+x},${+y+1}`,
-      `${+x+1},${+y+1}`,    
-    ]
+    const coordsAround = getCoordsAround(coords)
 
     coordsAround.forEach( coord => {
-      tiles.find( tile => {
-        if (tile.coords === coord && tile.overlay === 'flag') {
-          flagsAround.push('flag')
-        }
-      })
+      const index = getIndex(coord)
+
+      if (props.tiles[index].overlay === 'flag') {
+        flagsCounter++
+      }
     })
 
-    if (flagsAround.length === tile.number) {
-      openTilesAround(coords, tiles)
+    if (flagsCounter === tile.number) {
+      openTilesAround(coords)
     }
   }
 
-  const openTilesAround = (coords, tiles) => {
+  const openTilesAround = (coords) => {
 
     const emptyTiles = new Set();
 
     const openEightTiles = coords => {
-      
-      const [x, y] = coords.split(',')
-    
-      const coordsAround = [
-        `${+x-1},${+y-1}`,
-        `${+x},${+y-1}`,
-        `${+x+1},${+y-1}`,
-        `${+x-1},${+y}`,
-        `${+x+1},${+y}`,
-        `${+x-1},${+y+1}`,
-        `${+x},${+y+1}`,
-        `${+x+1},${+y+1}`,    
-      ]
+
+      const coordsAround = getCoordsAround(coords)
 
       coordsAround.forEach( coord => {
-        tiles.find( tile => {
-          if (tile.coords === coord && tile.overlay !== 'flag') {
-            props.openTile(tile.index)
-            if (tile.number === 0) {
-              emptyTiles.add(tile.coords)
-            }
-            if (tile.isBomb) {
-              props.endGame('lose', tile.index) 
-            }
+
+        const index = getIndex(coord)
+
+        if (props.tiles[index].overlay !== 'flag' && !props.tiles[index].isOpen) {
+          props.openTile(index)
+        
+          if (props.tiles[index].number === 0){
+            emptyTiles.add(`${coord[0]},${coord[1]}`)
           }
-        })
+          if (props.tiles[index].isBomb) {
+            props.endGame('lose', index)
+          }
+        }
       })
     }
 
@@ -122,20 +130,19 @@ const Tile = (props) => {
     while (emptyTiles.size !== initialLength) {
       initialLength = emptyTiles.size;
       emptyTiles.forEach( coord => {
-        openEightTiles(coord) 
-        checkWin()
+        const coords = coord.split(',')
+        openEightTiles(coords) 
       })
     }
   }
 
   return(
     <div
-      onClick={ (e) => {
+      onClick={ () => {
         if (props.tile.overlay !== 'flag' && !props.isGameOver) {
           props.openTile(props.tile.index)
-          checkWin()
           if (props.tile.number === 0 && !props.tile.isBomb) {
-            openTilesAround(props.tile.coords, props.tiles)
+            openTilesAround(props.tile.coords)
           }
         }
         if (props.tile.overlay !== 'flag' && props.tile.isBomb && !props.isGameOver) {
@@ -144,7 +151,7 @@ const Tile = (props) => {
       }}
       onDoubleClick={ () => {
         if (props.tile.isOpen) {
-          openCheckedTiles(props.tile, props.tiles, props.tile.coords)
+          openCheckedTiles(props.tile, props.tile.coords)
         }
       }}
       onContextMenu={ evt => {
@@ -159,7 +166,9 @@ const Tile = (props) => {
       }}
       onTouchEnd={ () => {
         const response = checkTouchTimer(500)
-        if (response && !props.tile.isOpen && !props.isGameOver) {props.toggleFlag(props.tile.index, props.tile.overlay)}
+        if (response && !props.tile.isOpen && !props.isGameOver) {
+          props.toggleFlag(props.tile.index, props.tile.overlay)
+        }
       }}
       className='tile'
     >

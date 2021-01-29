@@ -42,20 +42,21 @@ const settingsReducer = (state, action) => {
     let y = 0;
 
     tiles.forEach((tile) => {
-      tile.coords = `${x},${y}`;
+      
+      tile.coords = [x, y];
       
       if (tile.isBomb) {
 
-        if (x > 0 && y > 0) numbers.push(`${x-1},${y-1}`);
-        if (y > 0) numbers.push(`${x},${y-1}`);
-        if (y > 0 && x < width - 1) numbers.push(`${x+1},${y-1}`);
+        if (x > 0 && y > 0) numbers.push([x - 1, y - 1]);
+        if (y > 0) numbers.push([x, y - 1]);
+        if (y > 0 && x < width - 1) numbers.push([x + 1, y - 1]);
 
-        if (x > 0) numbers.push(`${x-1},${y}`);
-        if (x < width - 1) numbers.push(`${x+1},${y}`);
+        if (x > 0) numbers.push([x - 1, y]);
+        if (x < width - 1) numbers.push([x + 1, y]);
 
-        if (x > 0 && y < height - 1) numbers.push(`${x-1},${y+1}`);
-        if (y < height - 1) numbers.push(`${x},${y+1}`);
-        if (x < width - 1 && y < height - 1) numbers.push(`${x+1},${y+1}`);
+        if (x > 0 && y < height - 1) numbers.push([x - 1, y + 1]);
+        if (y < height - 1) numbers.push([x, y + 1]);
+        if (x < width - 1 && y < height - 1) numbers.push([x + 1, y + 1]);
 
       }
       
@@ -67,8 +68,8 @@ const settingsReducer = (state, action) => {
     });
     
     numbers.forEach(num => {
-      tiles.find( tile => {
-        if (tile.coords === num) {
+      tiles.forEach( tile => {
+        if (tile.coords[0] === num[0] && tile.coords[1] === num[1]) {
           tile.number++;
         }
       })
