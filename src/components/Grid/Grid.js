@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Tile from '../Tile/Tile'
 import classNames from 'classnames'
+import Settings from '../Settings/Settings'
 
 const mapStateToProps = state => {
   return {
@@ -18,19 +19,20 @@ const Grid = (props) => {
   return (
     <div className={
       classNames({
-        'app': true,
         'field': true,
         'easy': props.difficulty === 'easy',
         'medium': props.difficulty === 'medium',
         'hard': props.difficulty === 'hard',
       })
     }>
+      <Settings />
       {props.tiles.map( tile => {
         return (<Tile
           key={tile.index}
           tile={tile}
         />)}
       )}
+      <br />
       {props.isGameOver && 
         <div
           className={

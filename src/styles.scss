@@ -1,0 +1,335 @@
+@font-face {
+  font-family: RussoOne;
+  src: url(../fonts/RussoOne-Regular.ttf);
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url(../fonts/Roboto-Medium.ttf);
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f3f3f3;
+  user-select: none;
+  transition: background-color .5s ease-in-out;
+}
+
+.settings__panel {
+  width: 250px;
+  border-right: 1px solid black;
+  height: 100vh;
+  position: fixed;
+  z-index: 10;
+  background-color: #f3f3f3;
+  transition: background-color .5s ease-in-out;
+}
+
+.difficulty__label {
+  border-top: 1px solid #000;
+  padding: 0.5em;
+
+  &:last-child {
+    border-bottom: 1px solid #000;
+  }
+}
+
+.difficulty__head {
+  margin: .6em .3em;
+}
+
+.difficulty__title {
+  margin: 0;
+}
+
+.difficulty__description {
+  margin: 0;
+}
+
+.theme__selector {
+  padding: .5em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.field {
+  margin: 0 auto;
+  padding-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.easy {
+  width: 160px;
+  height: 160px;
+}
+
+.medium {
+  width: 320px;
+  height: 320px;
+}
+
+.hard {
+  width: 600px;
+  height: 320px;
+}
+
+.tile {
+  font-family: RussoOne;
+  width: 18px;
+  height: 18px;
+  background-color: rgb(192, 192, 192);
+  border: 1px solid rgb(140, 140, 140);
+  margin: 0;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.tile__open {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(192, 192, 192);
+}
+
+.tile__closed {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid rgb(128, 128, 128);
+  border-right: 2px solid rgb(128, 128, 128);
+}
+
+.color__one {
+  color: rgb(30, 22, 246);
+}
+
+.color__two {
+  color: rgb(0, 128, 34)
+}
+
+.color__three {
+  color: rgb(255, 0, 19)
+}
+
+.color__four {
+  color: rgb(9, 6, 123)
+}
+
+.color__five {
+  color: rgb(130, 0, 5)
+}
+
+.color__six {
+  color: rgb(0, 129, 128)
+}
+
+.color__seven {
+  color: #000
+}
+
+.color__eight {
+  color: rgb(128, 128, 128)
+}
+
+.question {
+  color: #000;
+}
+
+.settings {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: inherit;
+  height: 60px;
+  margin: 0 auto;
+}
+
+.flags {
+  font-family: RussoOne;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.newGameButton {
+  font-family: Roboto;
+  color: rgb(55, 55, 55);
+  font-family: Roboto;
+  font-size: 0.9em;
+  border: 1px solid rgb(140, 140, 140);
+  padding: 3px;
+  border-radius: 5px;
+}
+
+.newGameButton:hover {
+  color: #000;
+  border-color: rgb(55, 55, 55);
+  transition: color .2s ease-in-out, border .2s ease-in-out;
+}
+
+.settings__button {
+  color: rgb(55, 55, 55);
+  width: 15px;
+  height: 15px;
+  font-family: Roboto;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 0.9em;
+  border: 1px solid rgb(140, 140, 140);
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.settings__button:hover {
+  color: #000;
+  border-color: rgb(55, 55, 55);
+  transition: color .2s ease-in-out, border .2s ease-in-out;
+}
+
+.flagsCounter {
+  background-color: #c4c4c4;
+  padding-right: 3px;
+  width: 36px;
+  height: 24px;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid rgb(128, 128, 128);
+  border-right: 2px solid rgb(128, 128, 128);
+  color: rgba(255, 0, 19, .9);
+  text-align: right;
+  font-size: 1.2em;
+}
+
+.difficulty {
+  width: 200px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-self: flex-start;
+}
+
+.messageBox {
+  position: absolute;
+  width: 100%;
+  height: 60px;
+  top: calc(120px + 2rem);
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.message__win {
+  background-color: rgba(0, 0, 190, .7);
+}
+
+.message__lose {
+  background-color: rgba(190, 0, 0, .7);
+}
+
+.detonated {
+  background-color: rgb(255, 0, 19);
+}
+
+.flagIcon,
+.bombIcon {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+body.dark {
+  background-color: #447;
+  transition: background-color .5s ease-in-out;
+
+  .settings__panel {
+    background-color: #447;
+    color: #fff;
+    transition: background-color .5s ease-in-out;
+  }
+
+  .tile {
+    background-color: rgb(90, 90, 200);
+    border: 1px solid black;
+  }
+
+  .tile__open {
+    background-color: rgb(205, 205, 205);
+  }
+
+  .tile__closed {
+    border: none;
+  }
+
+  .question {
+    color: rgb(205, 205, 205);
+  }
+
+  .flagsCounter {
+    background-color: #5a5ac8;
+    border-top: 1px solid gray;
+    border-left: 1px solid gray;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    color: #fff;
+  }
+
+  .newGameButton {
+    background-color: #5a5ac8;
+    border-top: 1px solid gray;
+    border-left: 1px solid gray;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    color: #fff;
+  }
+
+  .newGameButton:hover {
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid gray;
+    border-right: 1px solid gray;
+  }
+
+  .settings__button {
+    background-color: #5a5ac8;
+    border-top: 1px solid gray;
+    border-left: 1px solid gray;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    color: #fff;
+  }
+
+  .settings__button:hover {
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid gray;
+    border-right: 1px solid gray;
+  }
+}

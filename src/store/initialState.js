@@ -7,6 +7,7 @@ const initialState = {
   flagCounter: 0,
   isGameOver: false,
   detonatedId: null,
+  lightTheme: true,
 }
 
 export default initialState

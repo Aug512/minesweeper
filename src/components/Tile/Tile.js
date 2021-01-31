@@ -2,6 +2,7 @@ import React, {useEffect} from 'react'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import flagIcon from '../../images/mine.png'
+import flagIconDark from '../../images/mine-dark.png'
 import bombIcon from '../../images/bomb.png'
 import toggleFlag from '../../store/ActionCreators/toggleFlag'
 import openTile from '../../store/ActionCreators/openTile'
@@ -16,6 +17,7 @@ const mapStateToProps = (state, ownProps) => {
     tiles: state.tiles,
     width: state.width,
     height: state.height,
+    lightTheme: state.lightTheme,
   }
 }
 
@@ -166,6 +168,7 @@ const Tile = (props) => {
       }}
       onTouchEnd={ () => {
         const response = checkTouchTimer(500)
+
         if (response && !props.tile.isOpen && !props.isGameOver) {
           props.toggleFlag(props.tile.index, props.tile.overlay)
         }
@@ -174,7 +177,7 @@ const Tile = (props) => {
     >
       <div className={
         classNames({
-          'tile__open': props.tile.isOpen,
+          'tile__open': props.tile.isOpen && !props.tile.isBomb,
           'tile__closed': !props.tile.isOpen || props.tile.overlay !== 'none',
           'color__one': props.tile.overlay === 'none' && !props.tile.isBomb && props.tile.number === 1,
           'color__two': props.tile.overlay === 'none' && !props.tile.isBomb && props.tile.number === 2,
@@ -184,12 +187,12 @@ const Tile = (props) => {
           'color__six': props.tile.overlay === 'none' && !props.tile.isBomb && props.tile.number === 6,
           'color__seven': props.tile.overlay === 'none' && !props.tile.isBomb && props.tile.number === 7,
           'color__eight': props.tile.overlay === 'none' && !props.tile.isBomb && props.tile.number === 8,
-          'bomb': props.tile.isOpen && props.tile.isBomb,
-          'flag': props.tile.overlay === 'flag',
+          // 'bomb': props.tile.isOpen && props.tile.isBomb,
+          'question': props.tile.overlay === 'question',
           'detonated': (props.detonatedId === props.tile.index)
         })
       }>
-        {props.tile.overlay === 'flag' && <img src={flagIcon} alt='F' title='Флаг' className='flagIcon' />}
+        {props.tile.overlay === 'flag' && <img src={(props.lightTheme) ? flagIcon : flagIconDark} alt='F' title='Флаг' className='flagIcon' />}
         {!props.tile.isOpen && props.tile.overlay === 'question' && '?'}
         {props.tile.isOpen && !props.tile.isBomb && props.tile.number !== 0 && props.tile.number}
         {props.tile.isOpen && props.tile.isBomb && <img src={bombIcon} alt='B' title='Мина' className='bombIcon' />}

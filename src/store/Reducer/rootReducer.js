@@ -8,6 +8,7 @@ import START_NEW_GAME from '../Actions/START_NEW_GAME'
 import OPEN_TILE from '../Actions/OPEN_TILE'
 import WIN_GAME from '../Actions/WIN_GAME'
 import LOSE_GAME from '../Actions/LOSE_GAME'
+import TOGGLE_THEME from '../Actions/TOGGLE_THEME'
 
 const settingsReducer = (state, action) => {
 
@@ -202,6 +203,12 @@ const settingsReducer = (state, action) => {
         ...state,
         isGameOver: true,
         message: 'Победа!',
+      }
+
+    case TOGGLE_THEME:
+      return {
+        ...state,
+        lightTheme: !state.lightTheme,
       }
 
     default:

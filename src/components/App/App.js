@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import Settings from '../Settings/Settings'
+//import Settings from '../Settings/Settings'
+import SettingsPanel from '../SettingsPanel/SettingsPanel'
 import Grid from '../Grid/Grid'
 import setDifficulty from '../../store/ActionCreators/setDifficulty'
 
@@ -22,7 +23,7 @@ function App(props) {
 
   return (
     <div>
-      <Settings />
+      <SettingsPanel />
       <Grid />
     </div>
   )
