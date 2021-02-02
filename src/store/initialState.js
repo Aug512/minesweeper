@@ -8,6 +8,8 @@ const initialState = {
   isGameOver: false,
   detonatedId: null,
   lightTheme: true,
+  isSettingsOpen: false,
+  isMobileDevice: false,
 }
 
 export default initialState

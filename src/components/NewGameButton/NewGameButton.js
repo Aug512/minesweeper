@@ -13,7 +13,6 @@ const NewGameButton = (props) => {
       className='newGameButton'
       onClick={ () => {
         props.startNewGame()
-        console.log(this)
       }}
     >
       New Game

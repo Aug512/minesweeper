@@ -9,6 +9,10 @@ import OPEN_TILE from '../Actions/OPEN_TILE'
 import WIN_GAME from '../Actions/WIN_GAME'
 import LOSE_GAME from '../Actions/LOSE_GAME'
 import TOGGLE_THEME from '../Actions/TOGGLE_THEME'
+import OPEN_SETTINGS from '../Actions/OPEN_SETTINGS'
+import CLOSE_SETTINGS from '../Actions/CLOSE_SETTINGS'
+import SET_DESKTOP from '../Actions/SET_DESKTOP'
+import SET_MOBILE from '../Actions/SET_MOBILE'
 
 const settingsReducer = (state, action) => {
 
@@ -142,7 +146,8 @@ const settingsReducer = (state, action) => {
       }
 
     case SET_DIFFICULTY_HARD:
-      return {
+
+    if (!state.isMobileDevice) return {
         ...state,
         width: 30,
         height: 16,
@@ -153,6 +158,17 @@ const settingsReducer = (state, action) => {
         isGameOver: false,
         detonatedId: null,
       }
+    if (state.isMobileDevice) return {
+      ...state,
+      width: 16,
+      height: 30,
+      bombsCounter: 99,
+      tiles: initTiles(16, 30, 99),
+      difficulty: 'hard',
+      flagCounter: 0,
+      isGameOver: false,
+      detonatedId: null,
+    }
 
     case START_NEW_GAME:
       return {
@@ -210,6 +226,30 @@ const settingsReducer = (state, action) => {
         ...state,
         lightTheme: !state.lightTheme,
       }
+
+    case OPEN_SETTINGS:
+      return {
+        ...state,
+        isSettingsOpen: true,
+      }
+
+    case CLOSE_SETTINGS:
+      return {
+        ...state,
+        isSettingsOpen: false,
+      }
+
+    case SET_MOBILE:
+      return {
+        ...state,
+        isMobileDevice: true,
+      }
+    
+      case SET_DESKTOP:
+        return {
+          ...state,
+          isMobileDevice: false,
+        }
 
     default:
       return state;

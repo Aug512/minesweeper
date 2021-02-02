@@ -11,6 +11,7 @@ const mapStateToProps = state => {
     difficulty: state.difficulty,
     message: state.message,
     detonatedId: state.detonatedId,
+    isMobileDevice: state.isMobileDevice,
   }
 }
 
@@ -22,17 +23,18 @@ const Grid = (props) => {
         'field': true,
         'easy': props.difficulty === 'easy',
         'medium': props.difficulty === 'medium',
-        'hard': props.difficulty === 'hard',
+        'hard': props.difficulty === 'hard' && !props.isMobileDevice,
+        'hard__mobile': props.difficulty === 'hard' && props.isMobileDevice,
       })
     }>
       <Settings />
+      
       {props.tiles.map( tile => {
         return (<Tile
           key={tile.index}
           tile={tile}
         />)}
       )}
-      <br />
       {props.isGameOver && 
         <div
           className={

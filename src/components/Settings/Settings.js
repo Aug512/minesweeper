@@ -3,6 +3,9 @@ import { connect } from 'react-redux'
 import NewGameButton from '../NewGameButton/NewGameButton'
 import setDifficulty from '../../store/ActionCreators/setDifficulty'
 import toggleTheme from '../../store/ActionCreators/toggleTheme'
+import setSettingsPanelView from '../../store/ActionCreators/setSettingsPanelView'
+import settingsIcon from '../../images/settings.png'
+import settingsIconDark from '../../images/settings-dark.png'
 
 const mapStateToProps = state => {
   return {
@@ -11,6 +14,7 @@ const mapStateToProps = state => {
     difficulty: state.difficulty,
     state: state,
     lightTheme: state.lightTheme,
+    isSettingsOpen: state.isSettingsOpen,
   }
 }
 
@@ -18,25 +22,28 @@ const mapDispatchToProps = dispatch => {
   return {
     setDifficulty: (diff) => dispatch(setDifficulty(diff)),
     toggleTheme: () => dispatch(toggleTheme()),
+    setSettingsPanelView: state => dispatch(setSettingsPanelView(state)),
   }
 }
 
 const Settings = (props) => {
   return (
-    <div className='settings'>
-      <div className='settings__button'>O</div>
-      <NewGameButton />
-      <div className='flags'>
-        <div className='flagsCounter' title='Осталось мин'>{props.bombsCounter - props.flagCounter}</div>
+    <div className='settings__wrapper'>
+      <div className='settings'>
+        <div
+          className='settings__button'
+          onClick={ () => {
+            props.setSettingsPanelView(!props.isSettingsOpen)
+          }}
+        >
+          {props.lightTheme && <img src={settingsIcon} alt='S' title='Открыть настройки' className='settingsIcon'/>}
+          {!props.lightTheme && <img src={settingsIconDark} alt='S' title='Открыть настройки' className='settingsIcon'/>}
+        </div>
+        <NewGameButton />
+        <div className='flags'>
+          <div className='flagsCounter' title='Осталось мин'>{props.bombsCounter - props.flagCounter}</div>
+        </div>
       </div>
-      {/* <div className='difficulty'>
-        <p style={{marginTop: '0.3em', marginBottom: '0.3em'}}>Выберите сложность:</p>
-        <select onChange={ evt => props.setDifficulty(evt.target.value)}>
-          <option value='easy' title='Поле 8х8, 10 мин'>Новичок</option>
-          <option value='medium' title='Поле 16х16, 40 мин'>Любитель</option>
-          <option value='hard' title='Поле 30х16, 99 мин'>Профессионал</option>
-        </select>
-      </div> */}
     </div>
   )
 }
