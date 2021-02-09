@@ -352,7 +352,7 @@ body.dark .themeSelector__field::after {
 }
 
 body.dark .tile {
-  background-color: #5a5ac8;
+  background: linear-gradient(135deg, #648ce1, #3654af);
   border: 1px solid black;
 }
 

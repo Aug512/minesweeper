@@ -27,14 +27,15 @@ const Grid = (props) => {
         'hard__mobile': props.difficulty === 'hard' && props.isMobileDevice,
       })
     }>
+
       <Settings />
-      
       {props.tiles.map( tile => {
         return (<Tile
           key={tile.index}
           tile={tile}
         />)}
       )}
+
       {props.isGameOver && 
         <div
           className={

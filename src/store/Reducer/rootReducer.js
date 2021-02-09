@@ -146,29 +146,17 @@ const settingsReducer = (state, action) => {
       }
 
     case SET_DIFFICULTY_HARD:
-
-    if (!state.isMobileDevice) return {
+      return {
         ...state,
-        width: 30,
-        height: 16,
+        width: state.isMobileDevice ? 16 : 30,
+        height: state.isMobileDevice ? 30 : 16,
         bombsCounter: 99,
-        tiles: initTiles(30, 16, 99),
+        tiles: state.isMobileDevice ? initTiles(16, 30, 99) : initTiles(30, 16, 99),
         difficulty: 'hard',
         flagCounter: 0,
         isGameOver: false,
         detonatedId: null,
       }
-    if (state.isMobileDevice) return {
-      ...state,
-      width: 16,
-      height: 30,
-      bombsCounter: 99,
-      tiles: initTiles(16, 30, 99),
-      difficulty: 'hard',
-      flagCounter: 0,
-      isGameOver: false,
-      detonatedId: null,
-    }
 
     case START_NEW_GAME:
       return {
