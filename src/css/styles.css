@@ -307,6 +307,8 @@ body {
 
 .detonated {
   background-color: #ff0013;
+  width: 18px;
+  height: 18px;
 }
 
 .flagIcon,
